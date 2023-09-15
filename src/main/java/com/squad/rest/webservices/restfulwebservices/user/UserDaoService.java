@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDaoService {
 
-  private static List<User> users = new ArrayList<>();
+  private static final List<User> users = new ArrayList<>();
 
   private static int usersCount = 0;
 

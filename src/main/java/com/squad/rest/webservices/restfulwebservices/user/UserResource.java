@@ -10,7 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("users")
 public class UserResource {
 
-  private UserDaoService service;
+  private final UserDaoService service;
 
   public UserResource(UserDaoService service) {
     this.service = service;
