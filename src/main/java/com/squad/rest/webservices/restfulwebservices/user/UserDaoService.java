@@ -1,10 +1,11 @@
 package com.squad.rest.webservices.restfulwebservices.user;
 
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UserDaoService {
