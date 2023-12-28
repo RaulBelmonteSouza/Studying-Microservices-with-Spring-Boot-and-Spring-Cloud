@@ -10,36 +10,26 @@ import java.util.function.Predicate;
 @Component
 public class UserDaoService {
 
-  private static final List<User> users = new ArrayList<>();
+  private final UserRepository userRepository;
 
-  private static int usersCount = 0;
-
-  static {
-    users.add(new User(++usersCount, "Adam", LocalDate.now().minusYears(30)));
-    users.add(new User(++usersCount, "Eve", LocalDate.now().minusYears(25)));
-    users.add(new User(++usersCount, "Jim", LocalDate.now().minusYears(20)));
+  public UserDaoService(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
   public List<User> findAll() {
-    return users;
+    return userRepository.findAll();
   }
 
   public User save(User user) {
-    user.setId(++usersCount);
-    users.add(user);
-    return findOne(usersCount);
+    return userRepository.save(user);
   }
 
   public User findOne(Integer id) {
-    Predicate<? super User> predicate = user -> user.getId().equals(id);
-    return users.stream()
-            .filter(predicate)
-            .findFirst()
-            .orElse(null);
+    return userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
   }
 
   public void deleteById(Integer id) {
-    Predicate<? super User> predicate = user -> user.getId().equals(id);
-    users.removeIf(predicate);
+    userRepository.deleteById(id);
   }
 }
