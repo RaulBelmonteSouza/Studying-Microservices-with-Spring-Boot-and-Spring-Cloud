@@ -1,6 +1,5 @@
 package com.squad.rest.webservices.restfulwebservices.user;
 
-import com.squad.rest.webservices.restfulwebservices.jpa.PostRepository;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -41,7 +40,7 @@ public class UserResource {
   @GetMapping("/{id}")
   public EntityModel<User> retrieveUser(@PathVariable Integer id) {
     User user = service.findOne(id);
-    if(user == null) throw new UserNotFoundException("ID: " + id);
+    if(user == null) throw new ResourceNotFoundException("ID: " + id);
 
     WebMvcLinkBuilder allUsersLink = linkTo(methodOn(this.getClass()).retrieveAllUsers());
 

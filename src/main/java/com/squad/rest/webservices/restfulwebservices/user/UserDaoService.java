@@ -24,7 +24,7 @@ public class UserDaoService {
 
   public User findOne(Integer id) {
     return userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
   }
 
   public void deleteById(Integer id) {

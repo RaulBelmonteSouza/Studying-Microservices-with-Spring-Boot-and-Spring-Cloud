@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -81,6 +82,17 @@ public class UserJpaResource {
             .buildAndExpand(postSaved.getId())
             .toUri();
     return ResponseEntity.created(location).body(postSaved);
+  }
+
+  @GetMapping("/{user_id}/posts/{post_id}")
+  public ResponseEntity<Object> retrieveUserPost(@PathVariable("user_id") Integer userId,
+                                               @PathVariable("post_id") Integer postId) {
+    User user = service.findOne(userId);
+    Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+    if (post.getUser().getId().equals(user.getId())) return ResponseEntity.ok(post);
+    return ResponseEntity.notFound().build();
   }
 
   @DeleteMapping("/{id}")
