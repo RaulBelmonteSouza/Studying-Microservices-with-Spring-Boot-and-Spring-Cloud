@@ -1,5 +1,6 @@
 package com.squad.rest.webservices.restfulwebservices.user;
 
+import com.squad.rest.webservices.restfulwebservices.jpa.PostRepository;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -20,9 +21,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserJpaResource {
 
   private final UserDaoService service;
+  private final PostRepository postRepository;
 
-  public UserJpaResource(UserDaoService service) {
+  public UserJpaResource(UserDaoService service, PostRepository postRepository) {
     this.service = service;
+    this.postRepository = postRepository;
   }
 
   @GetMapping
@@ -65,6 +68,19 @@ public class UserJpaResource {
         .toUri();
 
     return ResponseEntity.created(location).body(userSaved);
+  }
+
+  @PostMapping("/{id}/posts")
+  public ResponseEntity<Post> saveUserPost(@PathVariable("id") Integer userId, @Valid @RequestBody Post post) {
+    User user = service.findOne(userId);
+    post.setUser(user);
+    Post postSaved = postRepository.save(post);
+
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(postSaved.getId())
+            .toUri();
+    return ResponseEntity.created(location).body(postSaved);
   }
 
   @DeleteMapping("/{id}")

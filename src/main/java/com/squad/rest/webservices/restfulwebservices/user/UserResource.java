@@ -21,11 +21,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserResource {
 
   private final UserDaoService service;
-  private final PostRepository postRepository;
-
-  public UserResource(UserDaoService service, PostRepository postRepository) {
+  public UserResource(UserDaoService service) {
     this.service = service;
-    this.postRepository = postRepository;
   }
 
   @GetMapping
@@ -64,14 +61,6 @@ public class UserResource {
         .toUri();
 
     return ResponseEntity.created(location).body(userSaved);
-  }
-
-  @PostMapping("/{id}/posts")
-  public ResponseEntity<Post> saveUser(@PathVariable("id") Integer userId, @Valid @RequestBody Post post) {
-    User user = service.findOne(userId);
-    post.setUser(user);
-    Post postSaved = postRepository.save(post);
-    return ResponseEntity.created(null).body(postSaved);
   }
 
   @DeleteMapping("/{id}")
