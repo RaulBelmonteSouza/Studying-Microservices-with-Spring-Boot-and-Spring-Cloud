@@ -1,11 +1,9 @@
 package com.squad.rest.webservices.restfulwebservices.user;
 
+import com.squad.rest.webservices.restfulwebservices.jpa.UserRepository;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Component
 public class UserDaoService {
@@ -31,5 +29,10 @@ public class UserDaoService {
 
   public void deleteById(Integer id) {
     userRepository.deleteById(id);
+  }
+
+  public List<Post> retrieveUserPosts(Integer userId) {
+    User user = findOne(userId);
+    return user.getPosts();
   }
 }

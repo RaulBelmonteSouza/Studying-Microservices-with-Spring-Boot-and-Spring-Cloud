@@ -49,6 +49,11 @@ public class UserJpaResource {
           .add(allUsersLink.withRel("all-users"));
   }
 
+  @GetMapping("/{id}/posts")
+  public List<Post> retrieveUserPosts(@PathVariable("id") Integer userId) {
+    return service.retrieveUserPosts(userId);
+  }
+
   @PostMapping
   public ResponseEntity<User> saveUser(@Valid @RequestBody User user) {
 
