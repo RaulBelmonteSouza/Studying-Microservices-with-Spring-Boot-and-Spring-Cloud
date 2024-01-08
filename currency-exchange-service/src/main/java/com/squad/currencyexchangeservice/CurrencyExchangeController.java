@@ -11,9 +11,11 @@ import java.math.BigDecimal;
 public class CurrencyExchangeController {
 
     private final Environment environment;
+    private final CurrencyExchangeRepository currencyExchangeRepository;
 
-    public CurrencyExchangeController(Environment environment) {
+    public CurrencyExchangeController(Environment environment, CurrencyExchangeRepository currencyExchangeRepository) {
         this.environment = environment;
+        this.currencyExchangeRepository = currencyExchangeRepository;
     }
 
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
@@ -21,7 +23,9 @@ public class CurrencyExchangeController {
             @PathVariable String from,
             @PathVariable String to) {
 
-        CurrencyExchange currencyExchange = new CurrencyExchange(1000L, "USD", "BRL", BigDecimal.valueOf(50));
+        CurrencyExchange currencyExchange = currencyExchangeRepository.findTopByFromAndTo(from, to)
+                .orElseThrow(() -> new RuntimeException("Unable to find data for " + from + " to " + to));
+
         String port = environment.getProperty("local.server.port");
         String applicationName = environment.getProperty("spring.application.name");
         currencyExchange.setEnvironment(port + " - " + applicationName);
