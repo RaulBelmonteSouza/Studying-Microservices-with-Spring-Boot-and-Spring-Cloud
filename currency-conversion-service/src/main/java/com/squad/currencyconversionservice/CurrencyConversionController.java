@@ -15,8 +15,11 @@ public class CurrencyConversionController {
 
     private final Environment environment;
 
-    public CurrencyConversionController(Environment environment) {
+    private final CurrencyExchangeProxy currencyExchangeProxy;
+
+    public CurrencyConversionController(Environment environment, CurrencyExchangeProxy currencyExchangeProxy) {
         this.environment = environment;
+        this.currencyExchangeProxy = currencyExchangeProxy;
     }
 
     @GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
@@ -35,9 +38,22 @@ public class CurrencyConversionController {
 
         CurrencyConversion currencyConversion = responseEntity.getBody();
 
-        String port = environment.getProperty("local.server.port");
-        String applicationName = environment.getProperty("spring.application.name");
-        String env = port + " - " + applicationName;
+        return new CurrencyConversion(currencyConversion.getId(),
+                from,
+                to,
+                quantity,
+                currencyConversion.getConversionMultiple(),
+                quantity.multiply(currencyConversion.getConversionMultiple()),
+                getEnv());
+    }
+
+    @GetMapping("/currency-conversion-feign/from/{from}/to/{to}/quantity/{quantity}")
+    public CurrencyConversion calculateCurrencyConversionFeign(
+            @PathVariable String from,
+            @PathVariable String to,
+            @PathVariable BigDecimal quantity) {
+
+        CurrencyConversion currencyConversion = currencyExchangeProxy.retrieveExchangeValue(from, to);
 
         return new CurrencyConversion(currencyConversion.getId(),
                 from,
@@ -45,7 +61,13 @@ public class CurrencyConversionController {
                 quantity,
                 currencyConversion.getConversionMultiple(),
                 quantity.multiply(currencyConversion.getConversionMultiple()),
-                env);
+                getEnv());
+    }
+
+    private String getEnv() {
+        String port = environment.getProperty("local.server.port");
+        String applicationName = environment.getProperty("spring.application.name");
+        return port + " - " + applicationName;
     }
 
 }
