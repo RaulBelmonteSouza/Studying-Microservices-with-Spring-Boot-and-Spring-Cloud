@@ -61,7 +61,7 @@ public class CurrencyConversionController {
                 quantity,
                 currencyConversion.getConversionMultiple(),
                 quantity.multiply(currencyConversion.getConversionMultiple()),
-                getEnv());
+                currencyConversion.getEnvironment());
     }
 
     private String getEnv() {
