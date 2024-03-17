@@ -1,5 +1,8 @@
 package com.squad.currencyexchangeservice;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,23 @@ public class CircuitBreakerController {
         ResponseEntity<String> forEntity = new RestTemplate()
                 .getForEntity("http://localhost:9879/some-dummy-url", String.class);
         return forEntity.getBody();
+    }
+
+    @GetMapping("sample-api-cb")
+    @CircuitBreaker(name = "default", fallbackMethod = "hardcodedResponse")
+    public String sampleAPICircuitBreaker() {
+        logger.info("Sample API call received - circuit breaker");
+        ResponseEntity<String> forEntity = new RestTemplate()
+                .getForEntity("http://localhost:9879/some-dummy-url", String.class);
+        return forEntity.getBody();
+    }
+
+    @GetMapping("sample-api-rl")
+    @RateLimiter(name = "default", fallbackMethod = "hardcodedResponse")
+    @Bulkhead(name = "default")
+    public String sampleAPIRateLimit() {
+        logger.info("Sample API call received - rate limiter");
+        return "sample-api rate limiter";
     }
 
     public String hardcodedResponse(Exception ex) {
