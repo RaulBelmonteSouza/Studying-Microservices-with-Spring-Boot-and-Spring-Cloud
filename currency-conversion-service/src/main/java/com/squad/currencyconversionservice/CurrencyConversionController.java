@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -17,9 +16,12 @@ public class CurrencyConversionController {
 
     private final CurrencyExchangeProxy currencyExchangeProxy;
 
-    public CurrencyConversionController(Environment environment, CurrencyExchangeProxy currencyExchangeProxy) {
+    private final RestTemplate restTemplate;
+
+    public CurrencyConversionController(Environment environment, CurrencyExchangeProxy currencyExchangeProxy, RestTemplate restTemplate) {
         this.environment = environment;
         this.currencyExchangeProxy = currencyExchangeProxy;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
@@ -32,7 +34,7 @@ public class CurrencyConversionController {
         uriVariables.put("from", from);
         uriVariables.put("to", to);
 
-        ResponseEntity<CurrencyConversion> responseEntity = new RestTemplate()
+        ResponseEntity<CurrencyConversion> responseEntity = restTemplate
                 .getForEntity("http://localhost:8000/currency-exchange/from/USD/to/BRL",
                         CurrencyConversion.class, uriVariables);
 
