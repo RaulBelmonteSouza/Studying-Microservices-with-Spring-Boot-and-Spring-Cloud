@@ -12,6 +12,8 @@ import java.util.HashMap;
 @RestController
 public class CurrencyConversionController {
 
+    private static final String CURRENCY_EXCHANGE = "currency.exchange.serviceUrl";
+
     private final Environment environment;
 
     private final CurrencyExchangeProxy currencyExchangeProxy;
@@ -35,7 +37,7 @@ public class CurrencyConversionController {
         uriVariables.put("to", to);
 
         ResponseEntity<CurrencyConversion> responseEntity = restTemplate
-                .getForEntity("http://localhost:8000/currency-exchange/from/USD/to/BRL",
+                .getForEntity(environment.getProperty(CURRENCY_EXCHANGE),
                         CurrencyConversion.class, uriVariables);
 
         CurrencyConversion currencyConversion = responseEntity.getBody();
